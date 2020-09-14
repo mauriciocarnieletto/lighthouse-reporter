@@ -8,99 +8,7 @@ const parser = new Parser({
 });
 const outputs = ["html"];
 const pages = [
-  { report: "competition", page: "nubank", url: "https://nubank.com.br" },
-  { report: "competition", page: "neon", url: "https://neon.com.br" },
-  {
-    report: "competition",
-    page: "bancointer",
-    url: "https://www.bancointer.com.br/",
-  },
-  { report: "competition", page: "c6bank", url: "https://www.c6bank.com.br" },
-  {
-    report: "competition",
-    page: "original",
-    url: "https://www.original.com.br/",
-  },
-  { report: "competition", page: "itau", url: "https://www.itau.com.br/" },
-  {
-    report: "competition",
-    page: "bradesco",
-    url: "https://www.bradesco.com.br/",
-  },
-  { report: "competition", page: "next", url: "https://next.me" },
-
   { report: "page-comparasion", page: "next_home", url: "https://next.me" },
-  {
-    report: "page-comparasion",
-    page: "next_propostas",
-    url: "https://next.me/propostas",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_mimos",
-    url: "https://next.me/mimos",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_flow",
-    url: "https://next.me/flow",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_objetivos",
-    url: "https://next.me/objetivos",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_investimentos",
-    url: "https://next.me/investimentos",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_vaquinha",
-    url: "https://next.me/vaquinha",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_protecao",
-    url: "https://next.me/protecao",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_universitarios",
-    url: "https://next.me/universitarios",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_trazer-meu-salario",
-    url: "https://next.me/trazer-meu-salario",
-  },
-  { report: "page-comparasion", page: "next_faq", url: "https://next.me/faq" },
-  {
-    report: "page-comparasion",
-    page: "next_contato",
-    url: "https://next.me/contato",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_pr-kit",
-    url: "https://next.me/pr-kit",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_politica-privacidade",
-    url: "https://next.me/politica-privacidade",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_documentos-importantes",
-    url: "https://next.me/documentos-importantes",
-  },
-  {
-    report: "page-comparasion",
-    page: "next_cotacao-dolar",
-    url: "https://next.me/cotacao-dolar",
-  },
 ];
 
 async function main() {
@@ -122,7 +30,7 @@ async function main() {
 
 function getTodaysReportFolder() {
   const today = new Date();
-  const fileName = `data/${today.getMonth()}-${today.getDay()}`;
+  const fileName = `data/${today.getMonth() + 1}-${today.getDate()}`;
   if (!fs.existsSync(fileName)) {
     fs.mkdirSync(fileName);
   }
@@ -151,11 +59,18 @@ async function getReport(output, page, directory) {
 
   await chrome.kill();
   return {
+    report: page.report,
     page: page.page,
     url: page.url,
     seo: runnerResult.lhr.categories.seo.score * 100,
     performance: runnerResult.lhr.categories.performance.score * 100,
     accessibility: runnerResult.lhr.categories.accessibility.score * 100,
+    fcp: runnerResult.lhr.audits["first-contentful-paint"].displayValue,
+    fmp: runnerResult.lhr.audits["first-meaningful-paint"].displayValue,
+    lcp: runnerResult.lhr.audits["largest-contentful-paint"].displayValue,
+    tti: runnerResult.lhr.audits["interactive"].displayValue,
+    tbt: runnerResult.lhr.audits["total-blocking-time"].displayValue,
+    cls: runnerResult.lhr.audits["cumulative-layout-shift"].displayValue,
   };
 }
 
