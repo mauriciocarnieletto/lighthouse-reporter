@@ -68,18 +68,28 @@ async function getReport(output, page, directory) {
 
   await chrome.kill();
   return {
-    report: page.report,
-    page: page.page,
-    url: page.url,
+    ...page,
     // seo: runnerResult.lhr.categories.seo.score * 100,
     // accessibility: runnerResult.lhr.categories.accessibility.score * 100,
     performance: runnerResult.lhr.categories.performance.score * 100,
-    fcp: runnerResult.lhr.audits["first-contentful-paint"].displayValue,
-    fmp: runnerResult.lhr.audits["first-meaningful-paint"].displayValue,
-    lcp: runnerResult.lhr.audits["largest-contentful-paint"].displayValue,
-    tti: runnerResult.lhr.audits["interactive"].displayValue,
-    tbt: runnerResult.lhr.audits["total-blocking-time"].displayValue,
-    cls: runnerResult.lhr.audits["cumulative-layout-shift"].displayValue,
+    "fcp / s": (
+      runnerResult.lhr.audits["first-contentful-paint"].numericValue / 1000
+    ).toFixed(1),
+    "fmp / s": (
+      runnerResult.lhr.audits["first-meaningful-paint"].numericValue / 1000
+    ).toFixed(1),
+    "lcp / s": (
+      runnerResult.lhr.audits["largest-contentful-paint"].numericValue / 1000
+    ).toFixed(1),
+    "tti / s": (
+      runnerResult.lhr.audits["interactive"].numericValue / 1000
+    ).toFixed(1),
+    "tbt / ms": Math.round(
+      runnerResult.lhr.audits["total-blocking-time"].numericValue
+    ),
+    "cls / s": runnerResult.lhr.audits[
+      "cumulative-layout-shift"
+    ].numericValue.toFixed(1),
   };
 }
 
