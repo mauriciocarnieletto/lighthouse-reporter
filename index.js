@@ -3,6 +3,7 @@ const lighthouse = require("lighthouse");
 const chromeLauncher = require("chrome-launcher");
 const { Parser } = require("json2csv");
 const pages = require("./pages");
+const throttling = require("./constants.js").throttling;
 
 const outputs = ["html"];
 
@@ -49,7 +50,7 @@ async function getReport(output, page, directory) {
     onlyCategories: ["performance"],
     port: chrome.port,
     emulatedFormFactor: page.device,
-    // throttlingMethod: page.network,
+    throttling: throttling[page.network],
   };
   const runnerResult = await lighthouse(page.url, options);
   const reportHtml = runnerResult.report;
