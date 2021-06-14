@@ -7,5 +7,8 @@
     "chrome-launcher": "^0.13.4",
     "json2csv": "^5.0.1",
     "lighthouse": "^6.1.1"
+  },
+  "scripts": {
+    "start": "node ."
   }
 }
