@@ -19,7 +19,7 @@ async function getOrCreateFolder(fileName) {
 
 async function main() {
   const reportDirectory = await getOrCreateFolder(
-    `data/${new Date().toISOString() + 1}`
+    `data/${new Date().getTime().toString()}`
   );
   const reporter = new LighthouseReporter();
   const reports = [];
