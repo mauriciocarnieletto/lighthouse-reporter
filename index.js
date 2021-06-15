@@ -54,6 +54,7 @@ async function main() {
         );
 
         reports.push({
+          ...page,
           performance: report.lhr.categories.performance.score * 100,
           "fcp / s": (
             report.lhr.audits["first-contentful-paint"].numericValue / 1000
