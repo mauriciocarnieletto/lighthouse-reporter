@@ -28,7 +28,7 @@ async function main() {
 
   for (const envIndex in hosts) {
     const baseUrl = hosts[envIndex];
-    const envName = baseUrl.split("://")[1];
+    const envName = baseUrl.split("://")[1].replace(":", "-");
     for (const outputType in outputs) {
       for (const pageIndex in pages) {
         const page = pages[pageIndex];
