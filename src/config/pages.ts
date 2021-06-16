@@ -1,4 +1,14 @@
-const pages = [
+import { Throttling } from "./light-house";
+
+export interface Page {
+  report: string;
+  page: string;
+  url: string;
+  device: "mobile" | "desktop";
+  network: keyof Throttling;
+}
+
+export const pages: Page[] = [
   {
     report: "page-comparasion",
     page: "404 - Mobile",
@@ -560,5 +570,3 @@ const pages = [
     network: "desktopDense4G",
   },
 ];
-
-module.exports = { pages };

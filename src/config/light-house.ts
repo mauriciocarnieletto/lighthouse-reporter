@@ -1,20 +1,24 @@
-/**
- * @license Copyright 2018 The Lighthouse Authors. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- */
-"use strict";
+export interface NetworkConfiguration {
+  rttMs: number;
+  throughputKbps: number;
+  requestLatencyMs: number;
+  downloadThroughputKbps: number;
+  uploadThroughputKbps: number;
+  cpuSlowdownMultiplier: number;
+}
 
-/**
- * Adjustments needed for DevTools network throttling to simulate
- * more realistic network conditions.
- * @see https://crbug.com/721112
- * @see https://docs.google.com/document/d/10lfVdS1iDWCRKQXPfbxEn4Or99D64mvNlugP1AQuFlE/edit
- */
+export interface Throttling {
+  DEVTOOLS_RTT_ADJUSTMENT_FACTOR: number;
+  DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR: number;
+  mobileSlow4G: NetworkConfiguration;
+  mobileRegular3G: NetworkConfiguration;
+  desktopDense4G: NetworkConfiguration;
+}
+
 const DEVTOOLS_RTT_ADJUSTMENT_FACTOR = 3.75;
 const DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR = 0.9;
 
-const throttling = {
+export const throttling: Throttling = {
   DEVTOOLS_RTT_ADJUSTMENT_FACTOR,
   DEVTOOLS_THROUGHPUT_ADJUSTMENT_FACTOR,
   // These values align with WebPageTest's definition of "Fast 3G"
@@ -78,7 +82,7 @@ const defaultSettings = {
 };
 
 /** @type {LH.Config.Pass} */
-const defaultPassConfig = {
+export const defaultPassConfig = {
   passName: "defaultPass",
   loadFailureMode: "fatal",
   recordTrace: false,
@@ -92,16 +96,9 @@ const defaultPassConfig = {
   gatherers: [],
 };
 
-const nonSimulatedPassConfigOverrides = {
+export const nonSimulatedPassConfigOverrides = {
   pauseAfterFcpMs: 5250,
   pauseAfterLoadMs: 5250,
   networkQuietThresholdMs: 5250,
   cpuQuietThresholdMs: 5250,
-};
-
-module.exports = {
-  throttling,
-  defaultSettings,
-  defaultPassConfig,
-  nonSimulatedPassConfigOverrides,
 };

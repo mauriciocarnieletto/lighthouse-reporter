@@ -4,11 +4,17 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@types/json2csv": "^5.0.2",
     "chrome-launcher": "^0.13.4",
-    "json2csv": "^5.0.1",
-    "lighthouse": "^6.1.1"
+    "json2csv": "^5.0.6",
+    "lighthouse": "^8.0.0"
   },
   "scripts": {
-    "start": "node ."
+    "start": "ts-node --files src/index.ts",
+    "tsc:check": "tsc --pretty --noEmit"
+  },
+  "devDependencies": {
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
   }
 }
