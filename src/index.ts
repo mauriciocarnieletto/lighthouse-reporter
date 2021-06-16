@@ -2,10 +2,11 @@ import { Parser } from "json2csv";
 import { LighthousePageReporter } from "./LighthousePageReporter";
 import { hosts } from "./config/hosts";
 import { Page, pages } from "./config/pages";
+import { reportFromLighthouse } from "./Report";
 import { createFile, getOrCreateFolder } from "./helpers/file";
 
 type OutputType = "html" | "json";
-const outputs: OutputType[] = ["html", "json"];
+const outputs: OutputType[] = ["html"];
 const outputDirectory = "./data/";
 
 function cleanHostName(hostname: string) {
@@ -42,14 +43,21 @@ async function main() {
 
         const lighthouseReport = await reporter.getReport();
 
-        if (!lighthouseReport) continue;
+        if (!lighthouseReport) {
+          reports.push({ ...page });
+          continue;
+        }
+
+        const { report: html } = lighthouseReport;
+
+        createFile(`${envReportDirectory}/${page.page}.html`, html);
 
         createFile(
-          `${envReportDirectory}/${page.page}${outputType}`,
+          `${envReportDirectory}/${page.page}.json`,
           JSON.stringify(lighthouseReport)
         );
 
-        reports.push(auditsReport(lighthouseReport));
+        reports.push(reportFromLighthouse(page, lighthouseReport));
 
         console.log(`Completed analysis for ${page.page} (${envName})`);
       }
@@ -67,6 +75,3 @@ async function main() {
 }
 
 main();
-function auditsReport(lighthouseReport: LH.RunnerResult): any {
-  throw new Error("Function not implemented.");
-}

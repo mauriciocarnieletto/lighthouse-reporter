@@ -8,6 +8,9 @@ export async function getOrCreateFolder(fileName: string) {
   return fileName;
 }
 
-export async function createFile(fileName: string, content: string) {
-  return fs.writeFileSync(fileName, content);
+export async function createFile(fileName: string, content: string | string[]) {
+  return fs.writeFileSync(
+    fileName,
+    Array.isArray(content) ? content.join("") : content
+  );
 }

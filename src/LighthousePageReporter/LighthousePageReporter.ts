@@ -16,6 +16,7 @@ export class LighthousePageReporter {
     const chrome = await chromeLauncher.launch({
       chromeFlags: ["--headless", "--ignore-certificate-errors"],
     });
+
     const { device, network, url } = this.page;
 
     const runnerResult = await lighthouse(url, {
@@ -23,7 +24,7 @@ export class LighthousePageReporter {
       output: this.output,
       onlyCategories: ["performance"],
       port: chrome.port,
-      emulatedFormFactor: device,
+      preset: device,
       throttling: throttling[network],
     });
 
