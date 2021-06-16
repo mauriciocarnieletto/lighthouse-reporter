@@ -35,6 +35,7 @@ function auditsReport(audits: Record<string, LH.Audit.Result>) {
 }
 
 export function reportFromLighthouse(
+  id: string,
   page: Page,
   lighthouseReport: LH.RunnerResult
 ) {
@@ -45,6 +46,7 @@ export function reportFromLighthouse(
   const { audits, categories } = lhr;
 
   return {
+    id,
     ...page,
     ...categoriesReport(categories),
     ...auditsReport(audits),

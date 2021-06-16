@@ -3,7 +3,7 @@ import { LighthousePageReporter } from "./LighthousePageReporter";
 import { hosts } from "./config/hosts";
 import { Page, pages } from "./config/pages";
 import { reportFromLighthouse } from "./Report";
-import { createFile, getOrCreateFolder } from "./helpers/file";
+import { writeFile, getOrCreateFolder, readOrCreateFile } from "./helpers/file";
 
 type OutputType = "html" | "json";
 const outputs: OutputType[] = ["html"];
@@ -15,8 +15,12 @@ function cleanHostName(hostname: string) {
 
 async function main() {
   const reports = [];
-  const reportDirectory = await getOrCreateFolder(
-    `${outputDirectory}${new Date().getTime().toString()}`
+  const reportId = new Date().getTime().toString();
+  const reportOutputDirectory = await getOrCreateFolder(
+    `${outputDirectory}${reportId}`
+  );
+  let globalReport = JSON.parse(
+    await readOrCreateFile(`${outputDirectory}/report.json`, JSON.stringify([]))
   );
   let reportParser;
   let csv;
@@ -30,7 +34,7 @@ async function main() {
         const page = pages[pageIndex];
         const outputType = outputs[outputTypeIndex];
         const envReportDirectory = await getOrCreateFolder(
-          `${reportDirectory}/${envName}`
+          `${reportOutputDirectory}/${envName}`
         );
 
         const reporter = new LighthousePageReporter({
@@ -44,20 +48,20 @@ async function main() {
         const lighthouseReport = await reporter.getReport();
 
         if (!lighthouseReport) {
-          reports.push({ ...page });
+          reports.push({ id: reportId, ...page });
           continue;
         }
 
         const { report: html } = lighthouseReport;
 
-        createFile(`${envReportDirectory}/${page.page}.html`, html);
+        writeFile(`${envReportDirectory}/${page.page}.html`, html);
 
-        createFile(
+        writeFile(
           `${envReportDirectory}/${page.page}.json`,
           JSON.stringify(lighthouseReport)
         );
 
-        reports.push(reportFromLighthouse(page, lighthouseReport));
+        reports.push(reportFromLighthouse(reportId, page, lighthouseReport));
 
         console.log(`Completed analysis for ${page.page} (${envName})`);
       }
@@ -68,10 +72,16 @@ async function main() {
     fields: Object.keys(reports[0]),
   });
 
-  csv = reportParser.parse(reports);
+  const reportCsv = reportParser.parse(reports);
 
-  createFile(`${reportDirectory}/report.json`, JSON.stringify(reports));
-  createFile(`${reportDirectory}/report.csv`, csv);
+  writeFile(`${reportOutputDirectory}/report.json`, JSON.stringify(reports));
+  writeFile(`${reportOutputDirectory}/report.csv`, reportCsv);
+
+  reports.forEach((report) => globalReport.push(report));
+  writeFile(`${outputDirectory}/report.json`, JSON.stringify(globalReport));
+
+  csv = reportParser.parse(globalReport);
+  writeFile(`${outputDirectory}/report.csv`, csv);
 }
 
 main();
